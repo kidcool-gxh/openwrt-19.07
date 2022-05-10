@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-
-#include "ar7100.dtsi"
+/dts-v1/;
 
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
 
+#include "ar7100.dtsi"
+
 / {
 	aliases {
-		led-boot = &led_rf;
-		led-failsafe = &led_rf;
-		led-running = &led_rf;
-		led-upgrade = &led_rf;
+		led-boot = &rf;
+		led-failsafe = &rf;
+		led-running = &rf;
+		led-upgrade = &rf;
 	};
 
 	extosc: ref {
@@ -23,14 +24,15 @@
 	leds {
 		compatible = "gpio-leds";
 
-		led_rf: rf_green {
-			label = "green:rf";
+		rf: rf_green {
+			label = "ubnt:green:rf";
 			gpios = <&gpio 2 GPIO_ACTIVE_HIGH>;
 		};
 	};
 
 	keys {
-		compatible = "gpio-keys";
+		compatible = "gpio-keys-polled";
+		poll-interval = <20>;
 
 		wps {
 			label = "sw4";
@@ -55,6 +57,7 @@
 
 &spi {
 	status = "okay";
+	num-cs = <1>;
 
 	flash@0 {
 		compatible = "jedec,spi-nor";
@@ -67,6 +70,10 @@
 	};
 };
 
+&uart {
+	status = "okay";
+};
+
 &usb_phy {
 	status = "okay";
 };
@@ -76,7 +83,7 @@
 	#address-cells = <1>;
 	#size-cells = <0>;
 
-	usb_ohci_port: port@1 {
+	usb_ochi_port: port@1 {
 		reg = <1>;
 		#trigger-source-cells = <0>;
 	};
@@ -87,7 +94,7 @@
 	#address-cells = <1>;
 	#size-cells = <0>;
 
-	usb_ehci_port: port@1 {
+	usb_echi_port: port@1 {
 		reg = <1>;
 		#trigger-source-cells = <0>;
 	};

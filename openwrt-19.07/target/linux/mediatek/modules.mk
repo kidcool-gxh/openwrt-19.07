@@ -6,7 +6,7 @@ define KernelPackage/ata-ahci-mtk
 	$(LINUX_DIR)/drivers/ata/libahci_platform.ko
   AUTOLOAD:=$(call AutoLoad,40,libahci libahci_platform ahci_mtk,1)
   $(call AddDepends/ata)
-  DEPENDS+=@(TARGET_mediatek_mt7622||TARGET_mediatek_mt7623)
+  DEPENDS+=@TARGET_mediatek_mt7622
 endef
 
 define KernelPackage/ata-ahci-mtk/description
@@ -14,18 +14,6 @@ define KernelPackage/ata-ahci-mtk/description
 endef
 
 $(eval $(call KernelPackage,ata-ahci-mtk))
-
-define KernelPackage/btmtkuart
-  SUBMENU:=Other modules
-  TITLE:=MediaTek HCI UART driver
-  DEPENDS:=@TARGET_mediatek_mt7622 +kmod-bluetooth +mt7622bt-firmware
-  KCONFIG:=CONFIG_BT_MTKUART
-  FILES:= \
-	$(LINUX_DIR)/drivers/bluetooth/btmtkuart.ko
-  AUTOLOAD:=$(call AutoProbe,btmtkuart)
-endef
-
-$(eval $(call KernelPackage,btmtkuart))
 
 define KernelPackage/sdhci-mtk
   SUBMENU:=Other modules
@@ -39,18 +27,25 @@ endef
 
 $(eval $(call KernelPackage,sdhci-mtk))
 
-define KernelPackage/leds-ubnt-ledbar
-  SUBMENU:=LED modules
-  TITLE:=Ubiquiti UniFi 6 LR LED support
-  KCONFIG:=CONFIG_LEDS_UBNT_LEDBAR
-  FILES:= \
-	$(LINUX_DIR)/drivers/leds/leds-ubnt-ledbar.ko
-  AUTOLOAD:=$(call AutoProbe,leds-ubnt-ledbar,1)
-  DEPENDS:=@TARGET_mediatek_mt7622 +kmod-i2c-core
+define KernelPackage/crypto-hw-mtk
+  TITLE:= MediaTek's Crypto Engine module
+  DEPENDS:=@TARGET_mediatek
+  KCONFIG:= \
+	CONFIG_CRYPTO_HW=y \
+	CONFIG_CRYPTO_AES=y \
+	CONFIG_CRYPTO_AEAD=y \
+	CONFIG_CRYPTO_SHA1=y \
+	CONFIG_CRYPTO_SHA256=y \
+	CONFIG_CRYPTO_SHA512=y \
+	CONFIG_CRYPTO_HMAC=y \
+	CONFIG_CRYPTO_DEV_MEDIATEK
+  FILES:=$(LINUX_DIR)/drivers/crypto/mediatek/mtk-crypto.ko
+  AUTOLOAD:=$(call AutoLoad,90,mtk-crypto)
+  $(call AddDepends/crypto)
 endef
 
-define KernelPackage/leds-ubnt-ledbar/description
-  LED support for Ubiquiti UniFi 6 LR
+define KernelPackage/crypto-hw-mtk/description
+  MediaTek's EIP97 Cryptographic Engine driver.
 endef
 
-$(eval $(call KernelPackage,leds-ubnt-ledbar))
+$(eval $(call KernelPackage,crypto-hw-mtk))

@@ -8,14 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=readline
-PKG_VERSION:=8.1
+PKG_VERSION:=8.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=@GNU/readline
-PKG_HASH:=f8ceb4ee131e3232226a17f51b164afc46cd0b9e6cef344be87c65962cb82b02
+PKG_HASH:=e339f51971478d369f8a053a330a190781acb9864cf4c541060f12078948e461
 
-PKG_LICENSE:=GPL-3.0-or-later
+PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILES:=COPYING
 PKG_CPE_ID:=cpe:/a:gnu:readline
 
@@ -45,7 +45,6 @@ define Package/libreadline/description
 	history expansion on previous commands.
 endef
 
-HOST_CONFIGURE_ARGS += --disable-shared --with-pic
 CONFIGURE_ARGS += --with-curses --disable-install-examples
 
 CONFIGURE_VARS += \
@@ -53,7 +52,6 @@ CONFIGURE_VARS += \
 	bash_cv_func_sigsetjmp=yes \
 
 TARGET_CFLAGS += $(FPIC)
-HOST_CFLAGS += $(FPIC)
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include

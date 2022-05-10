@@ -8,8 +8,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libressl
-PKG_VERSION:=3.4.2
-PKG_HASH:=cb82ca7d547336917352fbd23db2fc483c6c44d35157b32780214ec74197b3ce
+PKG_VERSION:=2.9.2
+PKG_HASH:=c4c78167fae325b47aebd8beb54b6041d6f6a56b3743f4bd5d79b15642f9d5d4
 PKG_RELEASE:=1
 
 PKG_CPE_ID:=cpe:/a:openbsd:libressl
@@ -23,9 +23,8 @@ HOST_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/host-build.mk
 
-HOSTCC := $(HOSTCC_NOCACHE)
-HOST_CONFIGURE_ARGS += --enable-static --disable-shared --disable-tests
-HOST_CFLAGS += $(HOST_FPIC)
+HOST_CONFIGURE_ARGS += --disable-shared
+HOST_CFLAGS += $(FPIC)
 
 ifeq ($(GNU_HOST_NAME),x86_64-linux-gnux32)
 HOST_CONFIGURE_ARGS += --disable-asm

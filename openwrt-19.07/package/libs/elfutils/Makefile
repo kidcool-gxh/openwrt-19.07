@@ -7,28 +7,25 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=elfutils
-PKG_VERSION:=0.186
+PKG_VERSION:=0.177
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=https://sourceware.org/$(PKG_NAME)/ftp/$(PKG_VERSION)
-PKG_HASH:=7f6fb9149b1673d38d9178a0d3e0fb8a1ec4f53a9f4c2ff89469609879641177
-
+PKG_HASH:=fa489deccbcae7d8c920f60d85906124c1989c591196d90e0fd668e3dc05042e
 PKG_MAINTAINER:=Luiz Angelo Daros de Luca <luizluca@gmail.com>
-PKG_LICENSE:=GPL-3.0-or-later
+PKG_LICENSE:=GPL-3.0+
 PKG_LICENSE_FILES:=COPYING COPYING-GPLV2 COPYING-LGPLV3
 PKG_CPE_ID:=cpe:/a:elfutils_project:elfutils
-
 PKG_FIXUP:=autoreconf
-PKG_INSTALL:=1
-PKG_USE_MIPS16:=1
-PKG_BUILD_DEPENDS:=!USE_GLIBC:argp-standalone
 
-HOST_BUILD_DEPENDS:=argp-standalone/host musl-fts/host
+PKG_INSTALL:=1
+PKG_USE_MIPS16:=0
+
+PKG_BUILD_DEPENDS:=USE_UCLIBC:argp-standalone USE_MUSL:argp-standalone
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
-include $(INCLUDE_DIR)/host-build.mk
 
 define Package/elfutils/Default
   SECTION:=libs
@@ -46,7 +43,7 @@ endef
 
 define Package/libdw
   $(call Package/elfutils/Default)
-  DEPENDS:=+libelf +libbz2 +USE_MUSL:musl-fts
+  DEPENDS:=+libelf +libbz2
   TITLE+= (libdw)
 endef
 
@@ -63,26 +60,9 @@ else
 CONFIGURE_ARGS += --disable-nls
 endif
 
-HOST_CONFIGURE_ARGS += \
-	--disable-shared \
-	--disable-nls \
-	--disable-debuginfod \
-	--disable-libdebuginfod \
-	--without-lzma \
-	--without-zstd
-
 CONFIGURE_ARGS += \
 	--program-prefix=eu- \
-	--disable-debuginfod \
-	--disable-libdebuginfod \
-	--without-lzma \
-	--without-zstd
-
-HOST_CONFIGURE_VARS += \
-	ac_cv_search__obstack_free=yes
-
-CONFIGURE_VARS += \
-	ac_cv_search__obstack_free=yes
+	--without-lzma
 
 TARGET_CFLAGS += -D_GNU_SOURCE -Wno-unused-result -Wno-format-nonliteral
 
@@ -113,8 +93,6 @@ define Package/libelf/install
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libelf{-*.so,*.so.*} $(1)/usr/lib/
 endef
 
-# these lines need to be ordered by dependency because of ABI versioning
-$(eval $(call HostBuild))
-$(eval $(call BuildPackage,libelf))
-$(eval $(call BuildPackage,libdw))
 $(eval $(call BuildPackage,libasm))
+$(eval $(call BuildPackage,libdw))
+$(eval $(call BuildPackage,libelf))

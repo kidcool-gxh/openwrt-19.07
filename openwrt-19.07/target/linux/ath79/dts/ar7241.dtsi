@@ -36,9 +36,6 @@
 		phys = <&usb_phy>;
 
 		status = "disabled";
-
-		#address-cells = <1>;
-		#size-cells = <0>;
 	};
 };
 
@@ -49,6 +46,7 @@
 
 	resets = <&rst 9>;
 	reset-names = "mac";
+	phy-mode = "mii";
 	phy-handle = <&swphy4>;
 };
 
